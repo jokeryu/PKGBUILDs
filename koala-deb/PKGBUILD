@@ -1,0 +1,39 @@
+# Original Author: oklai
+# Maintainer: JokerYu <dayushinn@gmail.com>
+pkgname=koala-deb
+pkgver=2.0.3
+pkgrel=1
+pkgdesc="A GUI application for Less, Sass, Compass and CoffeeScript compilation."
+arch=("i686" "x86_64")
+url="http://koala-app.com/"
+license=("Apache")
+options=(!strip)
+depends=("gconf" "gtk2" "nss" "libudev.so.0")
+optdepends=(
+  "ruby: sass compilation support" 
+  "lessc: use system less compiler" 
+  "ruby-sass: use system sass compiler" 
+  "ruby-compass: use system compass compiler" 
+  "coffee-script: use system coffee compiler"
+)
+conflicts=("koala")
+_pkg=koala
+
+if [ "$CARCH" = "x86_64" ];then
+  _arch="amd64"
+  md5sums=('cdfc7db29c2b3c0a78d77016c95e9ffc')
+elif [ "$CARCH" = "i686" ];then
+  _arch="i386"
+  md5sums=('6fdd9e45d0f600e7b9dde66a0ff088fe')
+fi
+
+source=("${_pkg}_${pkgver}_${_arch}.deb")
+
+# You should download the package manully.
+# 64bit https://www.amazon.com/clouddrive/share?s=AJfhBKi8Rccqn6j-2R9ctU
+# 32bit https://www.amazon.com/clouddrive/share?s=uPyHYhj3QpMmXwrmIOjU_w
+
+package() {
+  tar zxfp ${srcdir}/data.tar.gz -C ${pkgdir}/
+  chmod -R 755 ${pkgdir}/usr
+}
