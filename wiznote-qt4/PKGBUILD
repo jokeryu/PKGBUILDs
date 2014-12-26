@@ -1,0 +1,40 @@
+# $Id: PKGBUILD 123755 2014-12-11 04:23:27Z fyan $
+# Maintainer: Felix Yan <felixonmars@gmail.com>
+# Contributor: Albert.Zhou <albert.zhou@wiz.cn>
+
+pkgname=wiznote-qt4
+pkgver=2.1.14
+pkgrel=1
+pkgdesc="Opensource cross-platform cloud based note-taking client"
+arch=('i686' 'x86_64')
+url="http://www.wiznote.com"
+license=('GPL3' 'custom')
+depends=('desktop-file-utils' 'hicolor-icon-theme' 'xdg-utils' 'qt4')
+makedepends=('cmake' 'git' 'boost')
+install=wiznote.install
+_wiznote_project_name="WizQTClient"
+source=("git+https://github.com/WizTeam/${_wiznote_project_name}.git#branch=v$pkgver")
+md5sums=('SKIP')
+conflicts=('wiznote')
+
+prepare() {
+  rm $_wiznote_project_name/share/skins/default/Thumbs.db
+
+  rm -rf build; mkdir build
+}
+
+build() {
+  cd build
+
+  cmake \
+    -DWIZNOTE_USE_QT5=NO \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release \
+    ../$_wiznote_project_name
+  make
+}
+
+package() {
+  cd build
+  make DESTDIR="$pkgdir/" install
+}
