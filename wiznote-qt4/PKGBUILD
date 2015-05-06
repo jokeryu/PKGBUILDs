@@ -1,24 +1,32 @@
-# $Id: PKGBUILD 123755 2014-12-11 04:23:27Z fyan $
+# $Id: PKGBUILD 131742 2015-04-20 10:05:06Z fyan $
 # Maintainer: Felix Yan <felixonmars@gmail.com>
 # Contributor: Albert.Zhou <albert.zhou@wiz.cn>
 
 pkgname=wiznote-qt4
-pkgver=2.1.14
+pkgver=2.1.17.20150420
+_commit=e4f06653fc951cf1600d297e296efc2efa4b1173
 pkgrel=1
 pkgdesc="Opensource cross-platform cloud based note-taking client"
 arch=('i686' 'x86_64')
 url="http://www.wiznote.com"
 license=('GPL3' 'custom')
-depends=('desktop-file-utils' 'hicolor-icon-theme' 'xdg-utils' 'qt4')
-makedepends=('cmake' 'git' 'boost')
+depends=('desktop-file-utils' 'hicolor-icon-theme' 'xdg-utils' 'qt4' 'crypto++') # indirect: qt5-declarative qt5-sensors zlib glic gcc-libs
+# shared clucene/quazip triggers segfault
+makedepends=('cmake' 'qt4' 'git' 'boost')
 install=wiznote.install
 _wiznote_project_name="WizQTClient"
-source=("git+https://github.com/WizTeam/${_wiznote_project_name}.git#branch=v$pkgver")
+source=("git+https://github.com/WizTeam/${_wiznote_project_name}.git#commit=$_commit")
 md5sums=('SKIP')
 conflicts=('wiznote')
 
 prepare() {
   rm $_wiznote_project_name/share/skins/default/Thumbs.db
+
+  sed -e 's/add_subdirectory(cryptopp)//' \
+      -i $_wiznote_project_name/lib/CMakeLists.txt
+  
+  sed -e 's/cryptlib/cryptopp/' \
+      -i $_wiznote_project_name/src/CMakeLists.txt
 
   rm -rf build; mkdir build
 }
